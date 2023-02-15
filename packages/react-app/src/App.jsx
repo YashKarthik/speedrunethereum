@@ -50,7 +50,14 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = {
+  name: "goerli",
+  color: "#0975F6",
+  chainId: 5,
+  faucet: "https://goerli-faucet.slock.it/",
+  blockExplorer: "https://goerli.etherscan.io/",
+  rpcUrl: `https://goerli.infura.io/v3/${INFURA_ID}`,
+};
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -449,7 +456,8 @@ function App(props) {
   }, [setRoute]);
 
   let faucetHint = "";
-  const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+  //const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+  const faucetAvailable = false;
 
   const [faucetClicked, setFaucetClicked] = useState(false);
   if (
