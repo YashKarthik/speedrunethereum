@@ -60,7 +60,14 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = {
+  name: "goerli",
+  color: "#0975F6",
+  chainId: 5,
+  faucet: "https://goerli-faucet.slock.it/",
+  blockExplorer: "https://goerli.etherscan.io/",
+  rpcUrl: `https://goerli.infura.io/v3/${INFURA_ID}`,
+};
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -484,6 +491,9 @@ function App(props) {
   const buyTokensEvents = useEventListener(readContracts, "Vendor", "BuyTokens", localProvider, 1);
   console.log("📟 buyTokensEvents:", buyTokensEvents);
 
+  const sellTokenEvents = useEventListener(readContracts, "Vendor", "SellTokens", localProvider, 1);
+  console.log("📟sellTokenEvents :", sellTokenEvents );
+
   const [tokenBuyAmount, setTokenBuyAmount] = useState({
     valid: false,
     value: "",
@@ -637,7 +647,6 @@ function App(props) {
                 </div>
               </Card>
             </div>
-            {/*Extra UI for buying the tokens back from the user using "approve" and "sellTokens"
 
             <Divider />
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
@@ -714,7 +723,6 @@ function App(props) {
 
               </Card>
             </div>
-            */}
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Vendor Token Balance:</div>
               <Balance balance={vendorTokenBalance} fontSize={64} />
@@ -741,13 +749,22 @@ function App(props) {
                   );
                 }}
               />
+
+              <div>Sell Token Events:</div>
+              <List
+                dataSource={sellTokenEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item.blockNumber + item.blockHash}>
+                      <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} /> swapped
+                      <Balance balance={item.args[2]} /> tokens for
+                      <Balance balance={item.args[1]} />
+                      ETH
+                    </List.Item>
+                  );
+                }}
+              />
             </div>
-
-            {/*
-
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
 
             <Contract
               name="YourContract"
@@ -757,7 +774,7 @@ function App(props) {
               blockExplorer={blockExplorer}
               contractConfig={contractConfig}
             />
-            */}
+
           </Route>
           <Route path="/contracts">
             <Contract
